@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title>
+			RJ 毕设
+		</title>
+	</head>
+	<body style="margin: 20px 0 0 0;padding: 0px 12%;height: 100%;width: 75%;align-items: center;background-color: aliceblue;align-content: center;">
+		<div id = "header" style="background-color:bisque;text-align: center;text-overflow: hidden;font-size: 28px;line-height: 42px;border-bottom:solid 2px;">
+			基于ZigBee的衣橱温度预警系统
+		</div>
+		<audio id="alarm">
+			<!--
+			<source src="http://ydown.smzy.com/yinpin/2016-6/smzy_2016062205.mp3" type="audio/mpeg">
+			-->
+			<source src="alarm.mp3" type="audio/mpeg">
+		</audio>
+		<div id="body" align="center" style="padding: 18px;margin-top:15px;border: solid 2px;">
+			<div style="padding:10px 0;height: 420px;text-align: center;border: solid 1px;margin-bottom: 15px;" >
+			<p style="text-align:left;" id="temp_h">当前温度阈值 :</p>
+				<div style="text-align:left;">
+					设定阈值 : <input type="text" id="set_temp_h" style="width:32px;"  />
+					<input type="button" value="SET" onclick="set_temp()" />
+				</div>
+				<div >
+					<p style="font-size:72px;" id = "Temp">衣橱温度: XX ℃</p>
+				</div> 
+				<div >
+					<p style="font-size:72px; color:red;display:none;" id = "alarm_t" >* 温度过高 *</p>
+				</div> 
+			</div>
+		
+		<div style="position: fixed;bottom: 20px;align-content: center;padding: 0 33%;">
+			All Rights @张柔婕
+		</div>
+	</body>
+	<script>
+		var temp_h = 25;
+			function get_temp_h(){
+				var xmlhttp;
+				if (window.XMLHttpRequest)
+				{
+					xmlhttp=new XMLHttpRequest();			// code for IE7+, Firefox, Chrome, Opera, Safari
+				}
+				else
+				{
+					xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");// code for IE6, IE5
+				}
+				if (xmlhttp!=null){
+					xmlhttp.onreadystatechange=function()
+					{
+						if (xmlhttp.readyState==4 && xmlhttp.status==200)
+						{
+							temp_h = xmlhttp.responseText;
+							var display_string = "当前温度阈值 :  " + xmlhttp.responseText + "℃";
+							document.getElementById("temp_h").innerHTML = display_string;
+						}
+					}
+					xmlhttp.open("GET","/?action=get_temp_h",true);
+					xmlhttp.send();
+				}
+				else
+			 	{
+			  		alert("Your browser does not support XMLHTTP.");
+			  	}
+			 }
+			function set_temp(){
+				var xmlhttp;
+				var input_value = document.getElementById("set_temp_h").value;
+				if( input_value < 10 || input_value > 70)
+				{
+					alert("温度设定值不合法，设定值范围为 10 ~ 70。");
+					return;
+				}
+				var post_string = "/?set_temp_h=" + document.getElementById("set_temp_h").value;
+				if (window.XMLHttpRequest)
+				{
+					// code for IE7+, Firefox, Chrome, Opera, Safari
+					xmlhttp=new XMLHttpRequest();
+				}
+				else
+				{
+					// code for IE6, IE5
+					xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+				}
+				xmlhttp.onreadystatechange=function()
+				{
+					if (xmlhttp.readyState==4 && xmlhttp.status==200)
+					{
+						get_temp_h();
+					}
+				}
+				xmlhttp.open("POST",post_string,true);
+				xmlhttp.send();
+			}
+			function GetVal(){
+				var xmlhttp;
+				if (window.XMLHttpRequest)
+				{
+					xmlhttp=new XMLHttpRequest();			// code for IE7+, Firefox, Chrome, Opera, Safari
+				}
+				else
+				{
+					xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");// code for IE6, IE5
+				}
+				if (xmlhttp!=null){
+					xmlhttp.onreadystatechange=function()
+					{
+						if (xmlhttp.readyState==4 && xmlhttp.status==200)
+						{
+							var display_string = "衣橱温度: " + xmlhttp.responseText + "℃";
+							document.getElementById("Temp").innerHTML = display_string;
+							if(xmlhttp.responseText >= temp_h)
+							{
+								document.getElementById("alarm").play();
+								document.getElementById("alarm_t").style.display="block";
+							}
+							else
+							{
+								document.getElementById("alarm").pause();
+								document.getElementById("alarm_t").style.display="none";
+							}
+						}
+					}
+					xmlhttp.open("GET","/?action=get_val",true);
+					xmlhttp.send();
+				}
+				else
+			 	{
+			  		alert("Your browser does not support XMLHTTP.");
+			  	}
+			 }
+		window.onload=function(){
+			get_temp_h();
+			setInterval(GetVal,1000);
+		}
+		</script>
+</html>
