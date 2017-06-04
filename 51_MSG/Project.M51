@@ -1,0 +1,347 @@
+BL51 BANKED LINKER/LOCATER V6.22                                                        06/04/2017  14:46:14  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22, INVOKED BY:
+D:\KEIL\C51\BIN\BL51.EXE main.obj TO Project RAMSIZE (256)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  main.obj (MAIN)
+  D:\KEIL\C51\LIB\C51S.LIB (?C_STARTUP)
+  D:\KEIL\C51\LIB\C51S.LIB (?C?CLDPTR)
+  D:\KEIL\C51\LIB\C51S.LIB (?C?MEMSET)
+  D:\KEIL\C51\LIB\C51S.LIB (?C_INIT)
+
+
+LINK MAP OF MODULE:  Project (MAIN)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            DATA    0008H     0011H     UNIT         ?DT?MAIN
+            IDATA   0019H     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+            CODE    0003H     001EH     UNIT         ?PR?MAIN?MAIN
+                    0021H     0002H                  *** GAP ***
+            CODE    0023H     0003H     ABSOLUTE     
+            CODE    0026H     008CH     UNIT         ?C_C51STARTUP
+            CODE    00B2H     0057H     UNIT         ?CO?MAIN
+            CODE    0109H     0045H     UNIT         ?C?LIB_CODE
+            CODE    014EH     0034H     UNIT         ?PR?SERI_RECV?MAIN
+            CODE    0182H     002AH     UNIT         ?PR?SEND_MESSAGE?MAIN
+            CODE    01ACH     0026H     UNIT         ?PR?_DELAY?MAIN
+            CODE    01D2H     0024H     UNIT         ?PR?CHECK_OK?MAIN
+            CODE    01F6H     0022H     UNIT         ?PR?CHECK_SEND?MAIN
+            CODE    0218H     0021H     UNIT         ?PR?SET_TEXT_MODE?MAIN
+            CODE    0239H     0019H     UNIT         ?PR?_BEE_RUN?MAIN
+            CODE    0252H     0019H     UNIT         ?PR?JUMP?MAIN
+            CODE    026BH     0016H     UNIT         ?PR?_SEND_STR?MAIN
+            CODE    0281H     0015H     UNIT         ?PR?DATA_CLEAR?MAIN
+            CODE    0296H     0010H     UNIT         ?PR?INIT_SERI?MAIN
+            CODE    02A6H     0008H     UNIT         ?PR?_SEND_CHAR?MAIN
+            CODE    02AEH     0007H     UNIT         ?C_INITSEG
+
+
+
+OVERLAY MAP OF MODULE:   Project (MAIN)
+
+
+SEGMENT
+  +--> CALLED SEGMENT
+---------------------
+?C_C51STARTUP
+  +--> ?PR?MAIN?MAIN
+BL51 BANKED LINKER/LOCATER V6.22                                                      06/04/2017  14:46:14  PAGE 2
+
+
+  +--> ?C_INITSEG
+
+?PR?MAIN?MAIN
+  +--> ?PR?INIT_SERI?MAIN
+  +--> ?PR?SET_TEXT_MODE?MAIN
+  +--> ?PR?SEND_MESSAGE?MAIN
+  +--> ?PR?_BEE_RUN?MAIN
+
+?PR?SET_TEXT_MODE?MAIN
+  +--> ?CO?MAIN
+  +--> ?PR?JUMP?MAIN
+  +--> ?PR?CHECK_OK?MAIN
+
+?PR?JUMP?MAIN
+  +--> ?PR?_SEND_STR?MAIN
+  +--> ?PR?DATA_CLEAR?MAIN
+
+?PR?CHECK_OK?MAIN
+  +--> ?PR?_BEE_RUN?MAIN
+
+?PR?_BEE_RUN?MAIN
+  +--> ?PR?_DELAY?MAIN
+
+?PR?SEND_MESSAGE?MAIN
+  +--> ?PR?DATA_CLEAR?MAIN
+  +--> ?CO?MAIN
+  +--> ?PR?_SEND_STR?MAIN
+  +--> ?PR?JUMP?MAIN
+  +--> ?PR?CHECK_SEND?MAIN
+  +--> ?PR?_SEND_CHAR?MAIN
+
+?PR?CHECK_SEND?MAIN
+  +--> ?PR?_BEE_RUN?MAIN
+  +--> ?PR?DATA_CLEAR?MAIN
+
+
+
+SYMBOL TABLE OF MODULE:  Project (MAIN)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        MAIN
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0080H         PUBLIC        P0
+  D:00A0H         PUBLIC        P2
+  B:00A8H.7       PUBLIC        EA
+  C:0281H         PUBLIC        data_clear
+  C:01F6H         PUBLIC        check_send
+  D:0008H         PUBLIC        back_data
+  C:01ACH         PUBLIC        _delay
+  B:00A8H.4       PUBLIC        ES
+  B:0098H.0       PUBLIC        RI
+  C:0218H         PUBLIC        Set_Text_Mode
+  B:0098H.1       PUBLIC        TI
+  C:0003H         PUBLIC        main
+  C:00E6H         PUBLIC        msg_content
+BL51 BANKED LINKER/LOCATER V6.22                                                      06/04/2017  14:46:14  PAGE 3
+
+
+  C:02A6H         PUBLIC        _send_char
+  B:00A0H.1       PUBLIC        bee
+  D:0099H         PUBLIC        SBUF
+  D:0098H         PUBLIC        SCON
+  D:0089H         PUBLIC        TMOD
+  C:0182H         PUBLIC        Send_Message
+  C:00CEH         PUBLIC        msg_number
+  C:01D2H         PUBLIC        check_ok
+  B:00A0H.0       PUBLIC        red
+  C:0257H         PUBLIC        jump
+  C:00B2H         PUBLIC        msg_CMGF
+  C:014EH         PUBLIC        seri_recv
+  C:0296H         PUBLIC        init_seri
+  D:008DH         PUBLIC        TH1
+  C:00BEH         PUBLIC        msg_CSCS
+  B:0088H.6       PUBLIC        TR1
+  C:0239H         PUBLIC        _bee_run
+  C:026BH         PUBLIC        _send_str
+  D:0017H         SYMBOL        i
+  D:0018H         SYMBOL        recv_ok
+  -------         PROC          _DELAY
+  D:0006H         SYMBOL        x
+  -------         DO            
+  D:0004H         SYMBOL        i
+  D:0002H         SYMBOL        j
+  -------         ENDDO         
+  C:01ACH         LINE#         25
+  C:01ACH         LINE#         26
+  C:01ACH         LINE#         28
+  C:01BCH         LINE#         29
+  C:01D1H         LINE#         30
+  -------         ENDPROC       _DELAY
+  -------         PROC          INIT_SERI
+  C:0296H         LINE#         32
+  C:0296H         LINE#         33
+  C:0296H         LINE#         34
+  C:0299H         LINE#         35
+  C:029CH         LINE#         36
+  C:029EH         LINE#         37
+  C:02A1H         LINE#         38
+  C:02A3H         LINE#         39
+  C:02A5H         LINE#         40
+  -------         ENDPROC       INIT_SERI
+  -------         PROC          _BEE_RUN
+  D:0001H         SYMBOL        n
+  C:0239H         LINE#         42
+  C:023BH         LINE#         43
+  C:023BH         LINE#         44
+  C:0241H         LINE#         45
+  C:0241H         LINE#         46
+  C:0243H         LINE#         47
+  C:024AH         LINE#         48
+  C:024CH         LINE#         49
+  C:024FH         LINE#         50
+  C:0251H         LINE#         51
+  -------         ENDPROC       _BEE_RUN
+  -------         PROC          SERI_RECV
+BL51 BANKED LINKER/LOCATER V6.22                                                      06/04/2017  14:46:14  PAGE 4
+
+
+  C:014EH         LINE#         53
+  C:0157H         LINE#         55
+  C:015AH         LINE#         56
+  C:015AH         LINE#         57
+  C:015FH         LINE#         58
+  C:015FH         LINE#         59
+  C:0162H         LINE#         60
+  C:0162H         LINE#         61
+  C:016DH         LINE#         62
+  C:016DH         LINE#         63
+  C:0170H         LINE#         64
+  C:0170H         LINE#         65
+  C:0177H         LINE#         66
+  C:0179H         LINE#         67
+  C:017BH         LINE#         68
+  C:017BH         LINE#         69
+  -------         ENDPROC       SERI_RECV
+  -------         PROC          DATA_CLEAR
+  C:0281H         LINE#         72
+  C:0281H         LINE#         73
+  C:0281H         LINE#         74
+  C:0290H         LINE#         75
+  C:0293H         LINE#         76
+  C:0295H         LINE#         77
+  -------         ENDPROC       DATA_CLEAR
+  -------         PROC          _SEND_STR
+  D:0001H         SYMBOL        string
+  C:026BH         LINE#         80
+  C:026BH         LINE#         81
+  C:026BH         LINE#         82
+  C:0270H         LINE#         83
+  C:0270H         LINE#         84
+  C:0272H         LINE#         85
+  C:0275H         LINE#         86
+  C:0277H         LINE#         87
+  C:027EH         LINE#         88
+  C:0280H         LINE#         89
+  -------         ENDPROC       _SEND_STR
+  -------         PROC          _SEND_CHAR
+  D:0007H         SYMBOL        b
+  C:02A6H         LINE#         91
+  C:02A6H         LINE#         92
+  C:02A6H         LINE#         93
+  C:02A8H         LINE#         94
+  C:02ABH         LINE#         95
+  C:02ADH         LINE#         96
+  -------         ENDPROC       _SEND_CHAR
+  -------         PROC          CHECK_OK
+  C:01D2H         LINE#         99
+  C:01D2H         LINE#         100
+  C:01D2H         LINE#         101
+  C:01D6H         LINE#         102
+  C:01D6H         LINE#         103
+  C:01D9H         LINE#         104
+  C:01E3H         LINE#         105
+  C:01E3H         LINE#         106
+  C:01E6H         LINE#         107
+BL51 BANKED LINKER/LOCATER V6.22                                                      06/04/2017  14:46:14  PAGE 5
+
+
+  C:01E6H         LINE#         108
+  C:01E6H         LINE#         109
+  C:01EBH         LINE#         110
+  C:01EDH         LINE#         111
+  C:01F3H         LINE#         112
+  C:01F3H         LINE#         113
+  C:01F3H         LINE#         114
+  C:01F5H         LINE#         115
+  -------         ENDPROC       CHECK_OK
+  -------         PROC          CHECK_SEND
+  C:01F6H         LINE#         118
+  C:01F6H         LINE#         119
+  C:01F6H         LINE#         120
+  C:01FAH         LINE#         121
+  C:01FAH         LINE#         122
+  C:01FDH         LINE#         123
+  C:0202H         LINE#         124
+  C:0202H         LINE#         125
+  C:0205H         LINE#         126
+  C:0205H         LINE#         127
+  C:0205H         LINE#         128
+  C:020AH         LINE#         129
+  C:020CH         LINE#         130
+  C:0212H         LINE#         131
+  C:0212H         LINE#         132
+  C:0215H         LINE#         133
+  C:0215H         LINE#         134
+  C:0217H         LINE#         135
+  -------         ENDPROC       CHECK_SEND
+  -------         PROC          L?0056
+  -------         ENDPROC       L?0056
+  -------         PROC          JUMP
+  C:0257H         LINE#         138
+  C:0257H         LINE#         139
+  C:0257H         LINE#         140
+  C:025BH         LINE#         141
+  C:025EH         LINE#         142
+  C:0261H         LINE#         143
+  C:0265H         LINE#         144
+  C:0268H         LINE#         145
+  -------         ENDPROC       JUMP
+  -------         PROC          SET_TEXT_MODE
+  C:0218H         LINE#         149
+  C:0218H         LINE#         150
+  C:0218H         LINE#         151
+  C:021CH         LINE#         152
+  C:021FH         LINE#         153
+  C:0225H         LINE#         154
+  C:0228H         LINE#         156
+  C:022CH         LINE#         157
+  C:022FH         LINE#         158
+  C:0235H         LINE#         159
+  C:0238H         LINE#         161
+  -------         ENDPROC       SET_TEXT_MODE
+  -------         PROC          SEND_MESSAGE
+  C:0182H         LINE#         164
+  C:0182H         LINE#         165
+BL51 BANKED LINKER/LOCATER V6.22                                                      06/04/2017  14:46:14  PAGE 6
+
+
+  C:0182H         LINE#         166
+  C:0185H         LINE#         167
+  C:018EH         LINE#         168
+  C:0191H         LINE#         169
+  C:0197H         LINE#         170
+  C:019AH         LINE#         172
+  C:01A3H         LINE#         173
+  C:01A8H         LINE#         174
+  C:01ABH         LINE#         175
+  -------         ENDPROC       SEND_MESSAGE
+  -------         PROC          MAIN
+  C:0003H         LINE#         177
+  C:0003H         LINE#         178
+  C:0003H         LINE#         179
+  C:0006H         LINE#         180
+  C:0009H         LINE#         181
+  C:000CH         LINE#         182
+  C:000CH         LINE#         183
+  C:000CH         LINE#         184
+  C:000FH         LINE#         185
+  C:000FH         LINE#         186
+  C:0012H         LINE#         187
+  C:0015H         LINE#         188
+  C:0015H         LINE#         189
+  C:0015H         LINE#         190
+  C:001AH         LINE#         191
+  C:001DH         LINE#         192
+  C:001DH         LINE#         194
+  C:001FH         LINE#         195
+  C:001FH         LINE#         196
+  -------         ENDPROC       MAIN
+  -------         ENDMOD        MAIN
+
+  -------         MODULE        ?C?CLDPTR
+  C:0109H         PUBLIC        ?C?CLDPTR
+  -------         ENDMOD        ?C?CLDPTR
+
+  -------         MODULE        ?C?MEMSET
+  C:0122H         PUBLIC        ?C?MEMSET
+  -------         ENDMOD        ?C?MEMSET
+
+Program Size: data=26.0 xdata=0 code=691
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

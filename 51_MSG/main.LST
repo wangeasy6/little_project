@@ -1,0 +1,227 @@
+C51 COMPILER V9.01   MAIN                                                                  06/04/2017 14:59:17 PAGE 1   
+
+
+C51 COMPILER V9.01, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN main.OBJ
+COMPILER INVOKED BY: d:\Keil\C51\BIN\C51.EXE main.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          /*
+   2          *       功能：使用红外传感器监测是否有人闯入，当有人闯入蜂鸣器报警并发送预设短信
+   3          *               对应引脚：红外传感器P2^0,蜂鸣器P2^1,短信模块接UART(P3^0+P3^1),指示灯连接P0^0 - P0^3(低电平点亮)
+   4          *       完成时间：2017/05/24
+   5          */
+   6          #include <reg51.h>
+   7          #include <string.h>
+   8          
+   9          sbit red = P2^0;
+  10          sbit bee = P2^1;
+  11          #define PASS 0                                  //红外检测有人通过时的电平
+  12          #define CYCLE 20
+  13          #define BEE_T 9
+  14          #define SEND_DLY 2
+  15          #define BACK_DATA_LEN 15
+  16          
+  17          unsigned char code msg_CMGF[]={"AT+CMGF=1\r\n"};
+  18          unsigned char code msg_CSCS[]={"AT+CSCS=\"GSM\"\r\n"};
+  19          unsigned char code msg_number[]={"AT+CMGS=\"18523591056\"\r\n"};   //短信号码
+  20          unsigned char code msg_content[]={"someone is break in! --From Home\r\n"};      //短信内容
+  21          static unsigned char recv_ok = 0;                       //置1时表示一条指令接收完成
+  22          static unsigned char i = 0;                                     //back_data 数组索引
+  23          unsigned char back_data[BACK_DATA_LEN];         //短信模块回传内容的缓存
+  24          
+  25          void delay(int x)
+  26          {  
+  27   1              int i,j;
+  28   1          for (i=0;i<x;i++)                  
+  29   1             for(j=0;j<600;j++);
+  30   1      }
+  31          
+  32          void init_seri()        //Uart初始化，波特率为9600
+  33          {
+  34   1              TMOD = 0x20;                    
+  35   1              TH1 = 0xFd;
+  36   1              TR1 = 1;
+  37   1              SCON = 0x50;       
+  38   1              EA = 1;         //开总中断
+  39   1              ES = 1;         //开串口中断    
+  40   1      }
+  41          
+  42          void bee_run(unsigned char n)   //用于驱动无源蜂鸣器报警，传入时间为宏值BEE_T
+  43          {
+  44   1         while(n--)
+  45   1         {
+  46   2                      bee = 1;
+  47   2                      delay(CYCLE);
+  48   2                      bee = 0;
+  49   2                      delay(CYCLE);
+  50   2         }
+  51   1      }
+  52          
+  53          void seri_recv(void) interrupt 4        //接收短信模块回发内容
+  54          {       
+  55   1              if(RI == 1)                                     //当硬件接收到一个数据时，RI会置位
+C51 COMPILER V9.01   MAIN                                                                  06/04/2017 14:59:17 PAGE 2   
+
+  56   1              {        
+  57   2                      if(i==BACK_DATA_LEN) 
+  58   2                      {
+  59   3                              i = 0;
+  60   3                      } 
+  61   2                      if(SBUF == '\n' || SBUF == 0x20)        //收到换行或者空格表示一条指令解说
+  62   2                      {
+  63   3                              recv_ok = 1;
+  64   3                      }
+  65   2                      back_data[i] = SBUF;
+  66   2                      RI = 0;   
+  67   2                      i++;            
+  68   2              }
+  69   1      }
+  70          
+  71          //用于清空back_data
+  72          void data_clear()
+  73          {
+  74   1               memset(back_data, 0, sizeof(back_data));
+  75   1               i = 0;
+  76   1               recv_ok = 0;
+  77   1      }
+  78                  
+  79          //UART发送模块
+  80          void send_str(char * string)
+  81          {
+  82   1              while(*string)
+  83   1              {
+  84   2                      SBUF = *string;
+  85   2                      while(!TI);
+  86   2                      TI = 0;
+  87   2                      string++;
+  88   2              }
+  89   1      }
+  90          
+  91          void send_char(unsigned char b)    
+  92          {
+  93   1          SBUF=b;
+  94   1              while(!TI);   
+  95   1              TI=0;   
+  96   1      }
+  97          
+  98          //检查设置是否成功
+  99          unsigned char check_ok()
+ 100          {
+ 101   1              if(recv_ok)
+ 102   1              {
+ 103   2                      recv_ok = 0;
+ 104   2                      if( back_data[0] == 0x4f && back_data[1] == 0x4b )
+ 105   2                      {
+ 106   3                              return 1;
+ 107   3                      }else
+ 108   2                      { 
+ 109   3                              bee_run(BEE_T);
+ 110   3                              bee = 1;
+ 111   3                              P0 = P0>>1;
+ 112   3                      }
+ 113   2              }
+ 114   1              return 0;
+ 115   1      }
+ 116          
+ 117          //当发送第三条指令后，短信模块回发“> ”，提示输入短信内容。此函数用于检测 “>”
+C51 COMPILER V9.01   MAIN                                                                  06/04/2017 14:59:17 PAGE 3   
+
+ 118          unsigned char check_send()
+ 119          {
+ 120   1              if(recv_ok)
+ 121   1              {
+ 122   2                      recv_ok = 0;
+ 123   2                      if( back_data[0] == 0x3e )      //0x3e ASCII对应为 “>”
+ 124   2                      {
+ 125   3                              return 1;
+ 126   3                      }else
+ 127   2                      { 
+ 128   3                              bee_run(BEE_T);
+ 129   3                              bee = 1; 
+ 130   3                              P0 = P0>>1;
+ 131   3                      }
+ 132   2                      data_clear();
+ 133   2              }
+ 134   1              return 0;
+ 135   1      }
+ 136          
+ 137          //短信模块在接收到指令之后会将指令回发回来，此函数用于跳过前面两行的回发指令
+ 138          void jump()
+ 139          {  
+ 140   1              while( !recv_ok );
+ 141   1              recv_ok = 0;
+ 142   1              data_clear();
+ 143   1              while( !recv_ok );
+ 144   1              recv_ok = 0;
+ 145   1              data_clear();
+ 146   1      }
+ 147          
+ 148          //设置短信发送模式
+ 149          void Set_Text_Mode(void)
+ 150          {       
+ 151   1              send_str(msg_CMGF);                                     //配置短信为TEXT模式
+ 152   1              jump();
+ 153   1              while( !check_ok() );
+ 154   1              P0 &= ~0x01;                                                    //TEXT模式设置成功，第一个指示灯亮起
+ 155   1      
+ 156   1              send_str(msg_CSCS);                                     //设置输入字符集为"GSM"
+ 157   1              jump();
+ 158   1              while( !check_ok() );
+ 159   1              P0 &= ~0x02;                                                    //字符集设置成功，第二个指示灯亮起
+ 160   1       
+ 161   1      }
+ 162          
+ 163          //发送短信
+ 164          void Send_Message(void)
+ 165          {         
+ 166   1              data_clear();
+ 167   1              send_str(msg_number); 
+ 168   1              jump();
+ 169   1              while( !check_send() );   
+ 170   1              P0 &= ~0x04;                                                    //短信号码设置成功，第三个指示灯亮起
+ 171   1               
+ 172   1              send_str(msg_content);   
+ 173   1              send_char(0x1a);
+ 174   1              P0 &= ~0x08;                                                    //发送短信成功，第四个指示灯亮起
+ 175   1      }
+ 176          
+ 177          int main()
+ 178          {
+ 179   1              init_seri();
+C51 COMPILER V9.01   MAIN                                                                  06/04/2017 14:59:17 PAGE 4   
+
+ 180   1              P0 = 0xff;                                                              //指示灯初始化
+ 181   1              Set_Text_Mode();
+ 182   1              while(1)
+ 183   1              {
+ 184   2                      if(red == PASS)                                         //红外检测到有人通过
+ 185   2                      {
+ 186   3                              P0 |= ~0x03;
+ 187   3                              Send_Message();
+ 188   3                              while(1)
+ 189   3                              {
+ 190   4                                      bee_run(BEE_T);
+ 191   4                                      if(red != PASS)
+ 192   4                                              break;
+ 193   4                              }
+ 194   3                              bee = 1;
+ 195   3                      }
+ 196   2              }
+ 197   1              return 0;
+ 198   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    382    ----
+   CONSTANT SIZE    =     87    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     17    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
