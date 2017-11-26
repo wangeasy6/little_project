@@ -141,34 +141,6 @@ int send_data(const char *data,const unsigned int length)
       return SUCCESS;
 }
 
-static int get_node(void)
-{
-      static int ret;
-      for(ret = 0; ret < MAX_THREAD; ret++)
-      {
-            if(g_data.status[ret] == UN_USE)
-            {
-                  return ret;
-            }
-            else
-                  continue;
-      }
-
-      if(ret == MAX_THREAD)
-            return FAILED;
-
-      return ret;
-}
-
-static int free_node(const int index)
-{
-      pthread_mutex_lock(&g_data.mutex);
-      g_data.status[index] = UN_USE;
-      pthread_mutex_unlock(&g_data.mutex);
-      print(LOG_DEBUG, "connfd index:%d Out\n",index);
-      return SUCCESS;
-}
-
 void *connect_process(void *arg)
 {
       char buf[1024];
@@ -194,7 +166,6 @@ void *connect_process(void *arg)
             }
       }
 
-      free_node( index );
       pthread_exit(NULL);
 
 }
@@ -235,12 +206,17 @@ int service_run(void)
 
             if(!strncmp(buf,"quit",4))
                   break;
-            print(LOG_INFO, "received a message :%s",buf);
+            print(LOG_DEBUG, "received a message :%s",buf);
 
-            if ( strstr(buf , "User-Agent"))
+            if ( strstr(buf , "HTTP"))
             {
-                  print(LOG_DEBUG, "recv http request\n");
+                  print(LOG_DEBUG, "recv a http request\n");
                   send(connfd,HTTP_HEADER_200,strlen(HTTP_HEADER_200),0);
+                  if (strstr(buf, "GET"))
+                  {
+                        print(LOG_DEBUG, "recv a http GET request\n");
+                        tcp_send_File(connfd, http_parser_GetFileName(buf,sizeof(buf)));
+                  }
             }
 #ifdef TEST
             memset(buf,0,sizeof(buf));
