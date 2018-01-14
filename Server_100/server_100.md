@@ -29,3 +29,5 @@ Benchmarking: GET http://192.168.111.130:9998/service.c
 
 Speed=1163012 pages/min, 32782048 bytes/sec.
 Requests: 1162653 susceed, 359 failed.
+
+* 对比了多进程、多线程、IO多路复用技术，多线程是最科学的，所以首先做多线程的并发。
