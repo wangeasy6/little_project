@@ -13,7 +13,6 @@ SHARED g_data;
 int service_init(void)
 {
       int s_ret;
-      int opt = 1;
       struct sockaddr_in servaddr;
       socklen_t addrlen;
       int port = 9999;
@@ -281,3 +280,16 @@ int service_run(void)
       return 1;
 }
 */
+
+int service_main(void)
+{
+      if( !service_init())
+      {
+            log_p(LOG_T_ERROR, "server init failed\n");
+            return -1;
+      }
+
+      service_run();
+      return 0;
+}
+

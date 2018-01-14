@@ -21,7 +21,6 @@
 
 #define MAX_THREAD 10
 
-int service_init(void);
-int service_run(void);
+int service_main(void);
 
 #endif
