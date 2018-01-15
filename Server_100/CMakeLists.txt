@@ -4,7 +4,7 @@ project(Server)
 #message(STATUS "This is BINARY dir " ${PROJECT_BINARY_DIR})
 
 ##########################################
-### Selectable scheme£º
+### Selectable scheme:
 # sample
 # thread
 # fork
