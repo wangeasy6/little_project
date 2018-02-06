@@ -12,11 +12,11 @@ project(Server)
 # epoll
 # select
 ##########################################
-set(SCH_DIR "sample")
+set(SCH_DIR "thread")
 message(STATUS "Selected scheme -- " ${SCH_DIR})
 
 ADD_SUBDIRECTORY(libsdk)
-ADD_SUBDIRECTORY(bin)
+ADD_SUBDIRECTORY(bin/)
 
 include_directories(./libsdk/inc)
 include_directories(./bin/${SCH_DIR}/inc)

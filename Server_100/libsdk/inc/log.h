@@ -48,5 +48,6 @@ void log_p(const uint mod, const uchar level,const char *, ...);   //带级别�
 void log_set_level(const uchar level);             //设置打印级别
 void log_p(const uchar level,const char *, ...);   //带级别的打印
 #endif
+int log_init(void);
 
 #endif

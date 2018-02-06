@@ -157,13 +157,13 @@ void log_p(const uint mod, const uchar level,const char *va_alist, ...)
                   return ;
       }
 
-      fprintf(stderr, buf, 0);
+      fprintf(stdout, buf, 0);
 
       va_start(args, va_alist);
-      vfprintf(stderr, va_alist, args);
+      vfprintf(stdout, va_alist, args);
       va_end(args);
 
-      fflush(stderr);
+      fflush(stdout);
 
       return ;
 }
@@ -265,10 +265,16 @@ void log_p(const uchar level,const char *va_alist, ...)
       }
 
       va_start(args, va_alist);
-      vfprintf(stderr, va_alist, args);
+      vfprintf(stdout, va_alist, args);
       va_end(args);
-      fflush(stderr);
+      fflush(stdout);
 
       return ;
+}
+int log_init(void)
+{
+      log_set_level(LOG_T_ALL);
+      //log_set_level(~LOG_T_DEBUG);
+      return 1;
 }
 #endif

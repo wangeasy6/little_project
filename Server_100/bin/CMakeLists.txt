@@ -1,6 +1,10 @@
 SET(LIBRARY_OUTPUT_DIRECTORY ${CMAKE_HOME_DIRECTORY}/build)
 SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_HOME_DIRECTORY}/build)
 
+if(SCH_DIR STREQUAL "thread")
+LINK_LIBRARIES(pthread)
+endif()
+
 include_directories(${CMAKE_HOME_DIRECTORY}/libsdk/inc)
 include_directories(./${SCH_DIR}/inc)
 AUX_SOURCE_DIRECTORY(./${SCH_DIR}/src SCH_SRCS_DIR)

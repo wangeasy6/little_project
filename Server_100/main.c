@@ -5,8 +5,7 @@
 
 int main(void)
 {
-      //set_level(LOG_ALL);
-      log_set_level(~LOG_T_DEBUG);
+      log_init();
       service_main();
       return 0;
 }
